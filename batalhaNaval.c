@@ -7,6 +7,7 @@
 #define TamanhoBarco 4
 #define TamanhoMatriz 10
 #define ValorBarco 3
+#define AlcanceHabilidade 3
 void MostrarNavioHorizontal(int posicaoInicialx,int posicaoInicialy,int matriz[TamanhoMatriz][TamanhoMatriz])
 {
     for(int x=0;x<TamanhoBarco;x++)
@@ -31,6 +32,14 @@ void PreencherNavioVertical(int posicaoInicialx,int posicaoInicialy,int matriz[T
     }
 
 }
+void PreencherNavioDiagonalParaBaixo(int posicaoInicialx,int posicaoInicialy,int matriz[TamanhoMatriz][TamanhoMatriz])
+{
+    for(int x=0;x<TamanhoBarco;x++)
+    {
+        matriz[posicaoInicialx+x][posicaoInicialy+x]=3;
+    }
+
+}
 void MostrarNavioVertical(int posicaoInicialx,int posicaoInicialy,int matriz[TamanhoMatriz][TamanhoMatriz])
 {
     for(int x=0;x<TamanhoBarco;x++)
@@ -52,12 +61,132 @@ void MostrarMatriz(int matriz[TamanhoMatriz][TamanhoMatriz])
     }
     printf("---------------Final Matriz----------------\n");
 }
+void HabilidadeCone(int posicaox, int posicaoy, int matriz[TamanhoMatriz][TamanhoMatriz])
+{
+    int x,y;
+    int tamanhoCone=0;
+    int linhaInicial=posicaox;
+    for(x=0;x<TamanhoMatriz;x++) 
+    {
+        for(y=0;y<TamanhoMatriz;y++)
+        {
+            if(x==(posicaox+tamanhoCone) && (y>=(posicaoy-tamanhoCone)&&y<=(posicaoy+tamanhoCone)&& tamanhoCone<AlcanceHabilidade) )
+            {
+                matriz[x][y]=1;
+            }
+        }
+        if((linhaInicial+tamanhoCone)==x&&tamanhoCone<AlcanceHabilidade)
+        tamanhoCone++;
+    }
+}
+void HabilidadeOctaedro(int posicaox, int posicaoy, int matriz[TamanhoMatriz][TamanhoMatriz])
+{
+    int x,y;
+    int tamanhoCone=0;//para determinar o tamanho horizontal 
+    int linhaInicial=posicaox;
+    int meioOctaedro=(int)(AlcanceHabilidade/2);//determina o meio do octaedro
+    int formaOctaetro=0;//variavel para dar forma ao octaedro
+    int somar=1;//boleano para somar
+    int trocar=0;//boleano para permitir a troca de somar apenas uma vez
 
+    for(x=0;x<TamanhoMatriz;x++) 
+    {
+        for(y=0;y<TamanhoMatriz;y++)
+        {
+            //formacao do octaedro
+            if(x==(posicaox+tamanhoCone) && (y>=(posicaoy-formaOctaetro)&&y<=(posicaoy+formaOctaetro)&& tamanhoCone<AlcanceHabilidade) )
+            {
+                matriz[x][y]=1;
+            }
+        }
+        //valida se chegou na posicao inicial informada pelo usuario
+        if((linhaInicial+tamanhoCone)==x&&tamanhoCone<AlcanceHabilidade)
+        tamanhoCone++;
+
+        //inicia a formar o octaedro apenas quando chegou na posicao inicial
+        if(tamanhoCone>0 && tamanhoCone<AlcanceHabilidade) {
+            //validacao se ainda e para somar ou diminuir apenas quando o formaOctaetro chega a metade do formato
+            if(formaOctaetro>=meioOctaedro && !trocar)
+            {
+                trocar=1;//troca para verdadeiro para nao entrar mais nesta parte
+                somar=0;
+            }
+            if(somar)
+            {
+                formaOctaetro++;
+            }
+            else
+            {
+                formaOctaetro--;
+            }
+        } 
+    }
+}
+void HabilidadeCruz(int posicaox, int posicaoy, int matriz[TamanhoMatriz][TamanhoMatriz])
+{
+    int x,y;
+    int tamanhoCone=0;//para determinar o tamanho horizontal 
+    int linhaInicial=posicaox;
+    int meioOctaedro=(int)(AlcanceHabilidade/2);//determina o meio do octaedro
+    int formaOctaetro=0;//variavel para dar forma ao octaedro
+    int somar=1;//boleano para somar
+    int trocar=0;//boleano para permitir a troca de somar apenas uma vez
+
+    for(x=0;x<TamanhoMatriz;x++) 
+    {
+        for(y=0;y<TamanhoMatriz;y++)
+        {
+            //formacao do octaedro
+            if(x==(posicaox+tamanhoCone) && tamanhoCone!=meioOctaedro && (y==posicaoy&& tamanhoCone<AlcanceHabilidade))
+            {
+                matriz[x][y]=1;
+            }
+            else if(x==(posicaox+tamanhoCone) && (y>=(posicaoy-formaOctaetro)&&y<=(posicaoy+formaOctaetro)
+            && tamanhoCone<AlcanceHabilidade) && tamanhoCone==meioOctaedro)
+            {
+                matriz[x][y]=1;
+            }
+        }
+        //valida se chegou na posicao inicial informada pelo usuario
+        if((linhaInicial+tamanhoCone)==x&&tamanhoCone<AlcanceHabilidade)
+        tamanhoCone++;
+
+        //inicia a formar o octaedro apenas quando chegou na posicao inicial
+        if(tamanhoCone>0 && tamanhoCone<AlcanceHabilidade) {
+            //validacao se ainda e para somar ou diminuir apenas quando o formaOctaetro chega a metade do formato
+            if(formaOctaetro>=meioOctaedro && !trocar)
+            {
+                trocar=1;//troca para verdadeiro para nao entrar mais nesta parte
+                somar=0;
+            }
+            if(somar)
+            {
+                formaOctaetro++;
+            }
+            else
+            {
+                formaOctaetro--;
+            }
+        } 
+    }
+}
 int main() {
     // Nível Novato - Posicionamento dos Navios
     // Sugestão: Declare uma matriz bidimensional para representar o tabuleiro (Ex: int tabuleiro[5][5];).
 
     int tabuleiro[TamanhoMatriz][TamanhoMatriz]={
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0}
+    };
+    int tabuleiroHabilidade[TamanhoMatriz][TamanhoMatriz]={
         {0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0},
@@ -75,9 +204,15 @@ int main() {
     MostrarMatriz(tabuleiro);
     PreencherNavioHorizontal(0,0,tabuleiro);
     PreencherNavioVertical(2,5,tabuleiro);
+    PreencherNavioDiagonalParaBaixo(4,0,tabuleiro);
+    PreencherNavioDiagonalParaBaixo(0,6,tabuleiro);
     MostrarMatriz(tabuleiro);
-    MostrarNavioHorizontal(0,0,tabuleiro);
-    MostrarNavioVertical(2,5,tabuleiro);
+
+    HabilidadeCone(7,2,tabuleiroHabilidade);
+    HabilidadeOctaedro(0,1,tabuleiroHabilidade);
+    HabilidadeCruz(3,7,tabuleiroHabilidade);    
+
+    MostrarMatriz(tabuleiroHabilidade);
 
     // Nível Aventureiro - Expansão do Tabuleiro e Posicionamento Diagonal
     // Sugestão: Expanda o tabuleiro para uma matriz 10x10.
